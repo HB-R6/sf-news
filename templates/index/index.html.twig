@@ -4,6 +4,15 @@
   {{ parent() }} - Hello IndexController!
 {% endblock %}
 
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('styles/home.css') }}" />
+{% endblock %}
+
 {% block body %}
   <h1>Accueil</h1>
+
+  <p>
+    <img src="{{ asset('images/morbid_angel.png') }}" alt="Mon image" style="max-width: 350px" />
+  </p>
 {% endblock %}
