@@ -4,8 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        erynn: "#14304b",
-        mak: "#00ab18",
+        erynn: "#aaa",
+        mak: "#cecece",
       },
     },
   },
