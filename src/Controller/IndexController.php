@@ -15,4 +15,10 @@ class IndexController extends AbstractController
             'student_name' => 'Evan',
         ]);
     }
+
+    #[Route('/about', name: 'about_page')]
+    public function about(): Response
+    {
+        return $this->render('index/about.html.twig');
+    }
 }
