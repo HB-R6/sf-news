@@ -18,7 +18,7 @@
       {% endblock %}
     {% endblock %}
   </head>
-  <body class="bg-white dark:bg-gray-900 dark:text-white">
+  <body class="bg-white dark:bg-gray-900 dark:text-white min-h-screen">
     <header>{{ include('nav.html.twig') }}</header>
 
     <main class="max-w-screen-xl mx-auto">
@@ -27,6 +27,6 @@
       {% endblock %}
     </main>
 
-    <footer></footer>
+    {{ include('footer.html.twig') }}
   </body>
 </html>
