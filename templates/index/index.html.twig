@@ -9,7 +9,9 @@
 
   <ul class="flex flex-col gap-2 justify-center">
     {% for cat in categories %}
-      <li class="p-4 bg-gray-800 shadow-xl uppercase text-2xl">{{ cat.name }}</li>
+      <li class="p-4 bg-gray-800 shadow-xl uppercase text-2xl">
+        <a href="{{ path('category_item', { id: cat.id }) }}">{{ cat.name }}</a>
+      </li>
     {% endfor %}
   </ul>
 {% endblock %}
