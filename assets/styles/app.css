@@ -7,3 +7,7 @@
     @apply md:text-blue-700 md:dark:text-blue-500;
   }
 }
+
+.form input {
+  color: black;
+}
