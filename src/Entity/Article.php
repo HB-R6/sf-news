@@ -15,15 +15,15 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('articles_read')]
+    #[Groups(['articles_read', 'categories_read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('articles_read')]
+    #[Groups(['articles_read', 'categories_read'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('articles_read')]
+    #[Groups(['articles_read'])]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
     private ?\DateTimeInterface $createdAt = null;
 
@@ -38,7 +38,7 @@ class Article
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('articles_read')]
+    #[Groups(['articles_read'])]
     private ?Category $category = null;
 
     public function getId(): ?int
