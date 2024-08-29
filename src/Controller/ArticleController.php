@@ -13,7 +13,7 @@ class ArticleController extends AbstractController
     #[Route('/articles', name: 'articles_list')]
     public function list(ArticleRepository $articleRepository): Response
     {
-        $articles = $articleRepository->findAll();
+        $articles = $articleRepository->findBy([], ['createdAt' => 'DESC']);
 
         return $this->render('article/list.html.twig', [
             'articles' => $articles,
