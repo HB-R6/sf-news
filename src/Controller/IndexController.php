@@ -9,6 +9,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 
 class IndexController extends AbstractController
@@ -37,7 +39,8 @@ class IndexController extends AbstractController
     #[Route('/newsletter/subscribe', name: "newsletter_subscribe", methods: ["GET", "POST"])]
     public function newsletterSubscribe(
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        MailerInterface $mailer
     ): Response {
         $newsletter = new NewsletterEmail();
         $form = $this->createForm(NewsletterType::class, $newsletter);
@@ -49,6 +52,15 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($newsletter);
             $em->flush();
+
+            $email = (new Email())
+            ->from('admin@hb-news.com')
+            ->to($newsletter->getEmail())
+            ->subject('HB NEWS - Inscription à la newsletter')
+            ->text('Votre email a bien été enregistré à notre newsletter')
+            ->html('<p>Votre email a bien été enregistré à notre newsletter</p>');
+
+            $mailer->send($email);
 
             return $this->redirectToRoute('newsletter_confirm');
         }
