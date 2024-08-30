@@ -27,4 +27,11 @@ class ArticleController extends AbstractController
             'article' => $article,
         ]);
     }
+
+    #[Route('/articles/stats', name: "articles_stats")]
+    public function articlesStats(): Response
+    {
+        $this->denyAccessUnlessGranted("ROLE_ADMIN");
+        return new Response('statistiques');
+    }
 }

@@ -53,6 +53,8 @@ class MakeCrudArticleController extends AbstractController
     #[Route('/{id}/edit', name: 'app_make_crud_article_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted("ARTICLE_EDIT", $article);
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
