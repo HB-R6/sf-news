@@ -36,7 +36,7 @@ class Article
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[ORM\ManyToOne(inversedBy: 'articles', fetch: "EAGER")]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['articles_read'])]
     private ?Category $category = null;
