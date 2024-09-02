@@ -16,11 +16,6 @@ class AppFixtures extends Fixture
 
     private const CATEGORIES_NAMES = ["Sport", "France", "International", "Économie", "Politique"];
 
-    public function __construct(
-        private UserPasswordHasherInterface $hasher
-    ) {
-    }
-
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('zh_TW');
@@ -54,14 +49,14 @@ class AppFixtures extends Fixture
         $admin
             ->setEmail("admin@test.com")
             ->setRoles(["ROLE_ADMIN"])
-            ->setPassword($this->hasher->hashPassword($admin, "admin1234"));
+            ->setPassword("admin1234");
 
         $manager->persist($admin);
 
         $user = new User();
         $user
             ->setEmail("user@test.com")
-            ->setPassword($this->hasher->hashPassword($user, "test1234"));
+            ->setPassword("test1234");
 
         $manager->persist($user);
 
