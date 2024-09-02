@@ -18,6 +18,7 @@ class NewsletterEmail
 
     #[ORM\Column(length: 255)]
     #[Assert\Email(message: "L'adresse email renseignée est invalide")]
+    #[Assert\NotBlank]
     private ?string $email = null;
 
     public function getId(): ?int
