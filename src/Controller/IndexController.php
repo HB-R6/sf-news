@@ -10,9 +10,11 @@ use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class IndexController extends AbstractController
 {
@@ -41,7 +43,8 @@ class IndexController extends AbstractController
     public function newsletterSubscribe(
         Request $request,
         EntityManagerInterface $em,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        HttpClientInterface $client
     ): Response {
         $newsletter = new NewsletterEmail();
         $form = $this->createForm(NewsletterType::class, $newsletter);
@@ -51,15 +54,30 @@ class IndexController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($newsletter);
-            $em->flush();
-
-            $dispatcher->dispatch(
-                new NewsletterRegisteredEvent($newsletter),
-                NewsletterRegisteredEvent::NAME
+            $response = $client->request(
+                Request::METHOD_POST,
+                "http://localhost:8000/api/check",
+                [
+                    'json' => ['email' => $newsletter->getEmail()]
+                ]
             );
 
-            return $this->redirectToRoute('newsletter_confirm');
+            $data = $response->toArray();
+            $isSpam = $data['result'] === 'spam';
+
+            if (!$isSpam) {
+                $em->persist($newsletter);
+                $em->flush();
+
+                $dispatcher->dispatch(
+                    new NewsletterRegisteredEvent($newsletter),
+                    NewsletterRegisteredEvent::NAME
+                );
+
+                return $this->redirectToRoute('newsletter_confirm');
+            }
+
+            $form->addError(new FormError("Erreur lors de la vérification de l'email"));
         }
 
         return $this->render('index/newsletter.html.twig', [
