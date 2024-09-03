@@ -44,7 +44,6 @@ class IndexController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         EventDispatcherInterface $dispatcher,
-        HttpClientInterface $spamChecker,
     ): Response {
         $newsletter = new NewsletterEmail();
         $form = $this->createForm(NewsletterType::class, $newsletter);
@@ -54,32 +53,15 @@ class IndexController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $response = $spamChecker->request(
-                Request::METHOD_POST,
-                "/api/check",
-                [
-                    'json' => ['email' => $newsletter->getEmail()]
-                ]
+            $em->persist($newsletter);
+            $em->flush();
+
+            $dispatcher->dispatch(
+                new NewsletterRegisteredEvent($newsletter),
+                NewsletterRegisteredEvent::NAME
             );
 
-            $data = $response->toArray();
-            $isSpam = $data['result'] === 'spam';
-
-            if (!$isSpam) {
-                $em->persist($newsletter);
-                $em->flush();
-
-                $dispatcher->dispatch(
-                    new NewsletterRegisteredEvent($newsletter),
-                    NewsletterRegisteredEvent::NAME
-                );
-
-                return $this->redirectToRoute('newsletter_confirm');
-            }
-
-            $form
-                ->get('email')
-                ->addError(new FormError("Erreur lors de la vérification de l'email"));
+            return $this->redirectToRoute('newsletter_confirm');
         }
 
         return $this->render('index/newsletter.html.twig', [
